@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Categoria>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Boas Vindas</h1>
+    <h2>Veja nossos livros por categorias</h2>
+</div>
+<div>
+    @foreach (var categoria in Model)
+    {
+        <div>
+            <h3>@categoria.Nome</h3>
+            <ul>
+                @foreach (var livro in categoria.Livros)
+                {
+                    <li>
+                        <strong>@livro.Titulo</strong> - @livro.Descricao (Autor: @livro.Autor?.Nome, Preço: @livro.Preco.ToString("C"))
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>

@@ -1,0 +1,45 @@
+﻿@model Livro
+@{
+    ViewData["Title"] = "Cadastrar Livro";
+}
+
+<div>
+    <div class="mb-5 text-center">
+        <h1>Cadastrar Livro</h1>
+    </div>
+
+    <form method="post" asp-controller="Livro" asp-action="Create">
+        <div class="mb-3">
+            <label for="Titulo" class="form-label">Titulo</label>
+            <input type="text" class="form-control" asp-for="Titulo" id="Titulo" placeholder="Nome do livro">
+            <span class="text-danger" asp-validation-for="Titulo"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="Descrição" class="form-label">Descrição</label>
+            <input type="text" class="form-control" asp-for="Descricao" id="Descrição" placeholder="Digite Descrição do Livro">
+            <span class="text-danger" asp-validation-for="Descricao"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="Preço" class="form-label">Preço</label>
+            <input type="number" class="form-control" asp-for="Preco" id="Preco" step="0.01" placeholder="Valor do Livro">
+            <span class="text-danger" asp-validation-for="Preco"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="CategoriaId" class="form-label">Categoria</label>
+            <select class="form-control" asp-for="CategoriaId" asp-items="ViewBag.CategoriaId"></select>
+            <span asp-validation-for="CategoriaId"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="AutorId" class="form-label">Autor</label>
+            <select class="form-control" asp-for="AutorId" asp-items="ViewBag.AutorId"></select>
+            <span class="text-danger" asp-validation-for="AutorId"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">Salvar</button>
+        <a class="btn btn-primary" asp-action="Index">Voltar</a>
+    </form>
+</div>

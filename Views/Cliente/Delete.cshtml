@@ -1,0 +1,33 @@
+﻿@model Cliente
+@{
+    ViewData["Title"] = "Excluir Cliente";
+}
+
+<div>
+    <div class="mb-5 text-center">
+        <h1>Excluir Cliente</h1>
+    </div>
+
+    <form method="post" asp-controller="Cliente" asp-action="Delete">
+        <div class="mb-3">
+            <label for="Nome" class="form-label">Nome</label>
+            <input type="text" class="form-control" asp-for="Nome" id="Nome" placeholder="Nome completo" disabled>
+            <span asp-validation-for="Nome"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="Email" class="form-label">Email</label>
+            <input type="email" class="form-control" asp-for="Email" id="Email" placeholder="Digite seu melhor E-mail" disabled>
+            <span asp-validation-for="Email"></span>
+        </div>
+
+      @*   <div class="mb-3">
+            <label for="Senha" class="form-label">Senha</label>
+            <input type="password" class="form-control" asp-for="Senha" id="Senha" placeholder="Digite sua Senha" disabled>
+            <span asp-validation-for="Senha"></span>
+        </div> *@
+
+        <button type="submit" class="btn btn-success">Excluir</button>
+        <a class="btn btn-primary" asp-action="Index">Voltar</a>
+    </form>
+</div>

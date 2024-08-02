@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Autor>
+@{
+    ViewData["Title"] = "Lista de Autores";
+}
+<div class="d-flex justify-content-between align-items-center">
+    <h1>Lista de Autores</h1>
+    <a class="btn btn-success" asp-action="Create">Cadastar novo Autor</a>
+</div>
+
+
+<div>
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Nome</th>
+                <th scope="col">Biografia</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                @foreach (var autores in Model)
+                {
+                    <tr>
+                        <th scope="row">@autores.Nome</th>
+                        <td>@autores.Biografia</td>
+                        <td>
+                            <a asp-controller="Autor" asp-action="Edit" asp-route-id="@autores.Id" class="btn btn-warning">Editar</a>
+                            <a asp-controller="Autor" asp-action="Delete" asp-route-id="@autores.Id" class="btn btn-danger">Excluir</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <footer>
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Pagina inicial</a>
+    </footer>
+</div>

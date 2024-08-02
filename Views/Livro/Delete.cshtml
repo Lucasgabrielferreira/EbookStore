@@ -1,0 +1,33 @@
+﻿@model Livro
+@{
+    ViewData["Title"] = "Excluir Livro";
+}
+
+<div>
+    <div class="mb-5 text-center">
+        <h1>Excluir Livro</h1>
+    </div>
+
+    <form method="post" asp-controller="Livro" asp-action="Delete">
+        <div class="mb-3">
+            <label for="Titulo" class="form-label">Titulo</label>
+            <input type="text" class="form-control" asp-for="Titulo" id="Titulo" placeholder="Nome do livro" disabled>
+            <span asp-validation-for="Titulo"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="Descrição" class="form-label">Descrição</label>
+            <input type="text" class="form-control" asp-for="Descricao" id="Descrição" placeholder="Digite Descrição do Livro" disabled>
+            <span asp-validation-for="Descricao"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="Preço" class="form-label">Preço</label>
+            <input type="number" class="form-control" asp-for="Preco" id="Senha" placeholder="Valor do Livro" disabled>
+            <span asp-validation-for="Preco"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">Excluir</button>
+        <a class="btn btn-primary" asp-action="Index">Voltar</a>
+    </form>
+</div>

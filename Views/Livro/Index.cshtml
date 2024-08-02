@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Livro>
+@{
+    ViewData["Title"] = "Lista de Livros";
+}
+<div class="d-flex justify-content-between align-items-center">
+    <h1>Lista de Livros</h1>
+    <a class="btn btn-success" asp-action="Create">Cadastar novo Livro</a>
+</div>
+
+
+<div>
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Titulo</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Preço</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Autor</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                @foreach (var livro in Model)
+                {
+                    <tr>
+                        <th scope="row">@livro.Titulo</th>
+                        <td>@livro.Descricao</td>
+                        <td>@livro.Preco.ToString("C")</td>
+                        <td>@livro.Categoria?.Nome</td>
+                        <td>@livro.Autor?.Nome</td>
+                        <td>
+                            <a asp-controller="Livro" asp-action="Edit" asp-route-id="@livro.Id" class="btn btn-warning">Editar</a>
+                            <a asp-controller="Livro" asp-action="Delete" asp-route-id="@livro.Id" class="btn btn-danger">Excluir</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <footer>
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Pagina inicial</a>
+    </footer>
+</div>

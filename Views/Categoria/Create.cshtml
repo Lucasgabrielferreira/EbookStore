@@ -1,0 +1,21 @@
+﻿@model Categoria
+@{
+    ViewData["Title"] = "Cadastrar Categoria";
+}
+
+<div>
+    <div class="mb-5 text-center">
+        <h1>Cadastrar Categoria</h1>
+    </div>
+
+    <form method="post" asp-controller="Categoria" asp-action="Create">
+        <div class="mb-3">
+            <label for="Nome" class="form-label">Nome Categoria</label>
+            <input type="text" class="form-control" asp-for="Nome" id="Nome" placeholder="Nome da Categotia">
+            <span asp-validation-for="Nome"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">Salvar</button>
+        <a class="btn btn-primary" asp-action="Index">Voltar</a>
+    </form>
+</div>

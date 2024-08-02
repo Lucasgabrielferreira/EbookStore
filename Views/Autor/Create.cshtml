@@ -1,0 +1,28 @@
+﻿@model Autor
+@{
+    ViewData["Title"] = "Cadastrar Autor";
+}
+
+<div>
+    <div class="mb-5 text-center">
+        <h1>Cadastrar Autor</h1>
+    </div>
+
+    <form method="post" asp-controller="Autor" asp-action="Create">
+        <div class="mb-3">
+            <label for="Nome" class="form-label">Nome</label>
+            <input type="text" class="form-control" asp-for="Nome" id="Nome" placeholder="Nome completo">
+            <span asp-validation-for="Nome"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="Biografia" class="form-label">Biografia</label>
+            <input type="text" class="form-control" asp-for="Biografia" id="Biografia" placeholder="Digite a biografia">
+            <span asp-validation-for="Biografia"></span>
+        </div>
+
+
+        <button type="submit" class="btn btn-success">Salvar</button>
+        <a class="btn btn-primary" asp-action="Index">Voltar</a>
+    </form>
+</div>

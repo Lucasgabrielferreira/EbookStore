@@ -1,0 +1,29 @@
+﻿@model Autor
+@{
+    ViewData["Title"] = "Editar Autor";
+}
+
+<div>
+    <div class="mb-5 text-center">
+        <h1>Editar Autor</h1>
+    </div>
+
+    <form method="post" asp-controller="Autor" asp-action="Edit">
+        <input type="hidden" asp-for="Id" />
+        <div class="mb-3">
+            <label for="Nome" class="form-label">Nome</label>
+            <input type="text" class="form-control" asp-for="Nome" id="Nome" placeholder="Nome completo">
+            <span class="text-danger" asp-validation-for="Nome"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="Biografia" class="form-label">Biografia</label>
+            <input type="text" class="form-control" asp-for="Biografia" id="Biografia" placeholder="Digite a biografia">
+            <span class="text-danger" asp-validation-for="Biografia"></span>
+        </div>
+
+
+        <button type="submit" class="btn btn-success">Salvar</button>
+        <a class="btn btn-primary" asp-action="Index">Voltar</a>
+    </form>
+</div>
