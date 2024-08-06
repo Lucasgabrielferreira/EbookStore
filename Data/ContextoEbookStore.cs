@@ -1,9 +1,10 @@
 ﻿using EbookStore.Mappings;
 using EbookStore.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-public class ContextoEbookStore : IdentityDbContext
+public class ContextoEbookStore : IdentityDbContext<IdentityUser>
 {
     public ContextoEbookStore(DbContextOptions<ContextoEbookStore> options)
             : base(options)
@@ -20,6 +21,8 @@ public class ContextoEbookStore : IdentityDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         // Configurações de mapeamento das entidades
         modelBuilder.ApplyConfiguration(new AutorMapping());
         modelBuilder.ApplyConfiguration(new CategoriaMapping());
