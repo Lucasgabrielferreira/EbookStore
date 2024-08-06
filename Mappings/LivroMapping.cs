@@ -4,12 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EbookStore.Mappings
 {
-    public class LivroMapping : IEntityTypeConfiguration<Livro>
+    public class LivroMapping : EntityBaseMapping<Livro>
     {
         public void Configure(EntityTypeBuilder<Livro> builder)
         {
+            base.Configure(builder);
+
             builder.ToTable("Livros");
-            builder.HasKey(l => l.Id);
 
             builder.Property(l => l.Titulo)
                  .IsRequired()

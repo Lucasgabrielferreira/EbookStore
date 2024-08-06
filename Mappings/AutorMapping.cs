@@ -4,13 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EbookStore.Mappings
 {
-    public class AutorMapping : IEntityTypeConfiguration<Autor>
+    public class AutorMapping : EntityBaseMapping<Autor>
     {
         public void Configure(EntityTypeBuilder<Autor> builder)
         {
-            builder.ToTable("Autores");
-            builder.HasKey(a => a.Id);
+            base.Configure(builder);
 
+            builder.ToTable("Autores");
+         
             builder.Property(a => a.Nome)
                 .IsRequired()
                 .HasMaxLength(50);

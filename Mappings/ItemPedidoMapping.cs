@@ -5,12 +5,13 @@ using System.Reflection.Emit;
 
 namespace EbookStore.Mappings
 {
-    public class ItemPedidoMapping : IEntityTypeConfiguration<ItemPedido>
+    public class ItemPedidoMapping : EntityBaseMapping<ItemPedido>
     {
         public void Configure(EntityTypeBuilder<ItemPedido> builder)
         {
+            base.Configure(builder);
+
             builder.ToTable("ItensPedido");
-            builder.HasKey(ip => ip.Id);
 
             builder.Property(ip => ip.LivroId)
                 .IsRequired();

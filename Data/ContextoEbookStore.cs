@@ -1,8 +1,9 @@
 ﻿using EbookStore.Mappings;
 using EbookStore.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-public class ContextoEbookStore : DbContext
+public class ContextoEbookStore : IdentityDbContext
 {
     public ContextoEbookStore(DbContextOptions<ContextoEbookStore> options)
             : base(options)

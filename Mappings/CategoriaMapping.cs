@@ -4,12 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EbookStore.Mappings
 {
-    public class CategoriaMapping : IEntityTypeConfiguration<Categoria>
+    public class CategoriaMapping : EntityBaseMapping<Categoria>
     {
         public void Configure(EntityTypeBuilder<Categoria> builder)
         {
+            base.Configure(builder);
+
             builder.ToTable("Categorias");
-            builder.HasKey(c => c.Id);
 
             builder.Property(c => c.Nome)
                 .IsRequired()
