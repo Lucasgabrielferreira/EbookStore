@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using EbookStore.Extensions;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,14 +10,14 @@ builder.Services.AddDbContext<ContextoEbookStore>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddRazorPages();
+
 builder.Services.AddApplicationServices(builder.Configuration);
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
-})
-.AddEntityFrameworkStores<ContextoEbookStore>()
-.AddDefaultTokenProviders();
+}).AddEntityFrameworkStores<ContextoEbookStore>();
 
 var app = builder.Build();
 
@@ -31,6 +30,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -41,5 +41,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 app.Run();
