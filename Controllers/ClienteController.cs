@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EbookStore.Models;
 using Microsoft.EntityFrameworkCore;
+using EbookStore.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EbookStore.Controllers
 {
+    [Authorize]
     public class ClienteController : Controller
     {
         private readonly ContextoEbookStore _contexto;
@@ -14,6 +17,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Cliente
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var clientes = _contexto.Clientes.ToList();
@@ -21,6 +25,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Cliente/Details/5
+        [AllowAnonymous]
         public IActionResult Details(Guid id)
         {
             if (id == null)
@@ -39,12 +44,14 @@ namespace EbookStore.Controllers
         }
 
         // GET: Cliente/Create
+        [ClaimsAuthorize("ADM", "AD")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Cliente/Create
+        [ClaimsAuthorize("ADM", "AD")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Nome,Email,Senha")] Cliente cliente)
@@ -59,6 +66,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Cliente/Edit/5
+        [ClaimsAuthorize("ADM", "ED")]
         public IActionResult Edit(Guid id)
         {
             if (id == null)
@@ -76,6 +84,7 @@ namespace EbookStore.Controllers
         }
 
         // POST: Cliente/Edit/5
+        [ClaimsAuthorize("ADM", "ED")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Guid id, [Bind("Id,Nome,Email,Senha")] Cliente cliente)
@@ -109,6 +118,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Cliente/Delete/5
+        [ClaimsAuthorize("ADM", "EX")]
         public IActionResult Delete(Guid id)
         {
             if (id == null)
@@ -127,6 +137,7 @@ namespace EbookStore.Controllers
         }
 
         // POST: Cliente/Delete/5
+        [ClaimsAuthorize("ADM", "EX")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(Guid id)

@@ -2,9 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using EbookStore.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
+using EbookStore.Extensions;
 
 namespace EbookStore.Controllers
 {
+    [Authorize]
     public class LivroController : Controller
     {
         private readonly ContextoEbookStore _contexto;
@@ -15,6 +18,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Livro
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var livros = _contexto.Livros
@@ -25,6 +29,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Livro/Details/5
+        [AllowAnonymous]
         public IActionResult Details(Guid id)
         {
             if (id == null)
@@ -45,6 +50,7 @@ namespace EbookStore.Controllers
             return View(livro);
         }
 
+        [ClaimsAuthorize("ADM", "AD")]
         public IActionResult Create()
         {
             ViewBag.CategoriaId = new SelectList(_contexto.Categorias, "Id", "Nome");
@@ -53,6 +59,7 @@ namespace EbookStore.Controllers
         }
 
         // POST: Livro/Create
+        [ClaimsAuthorize("ADM", "AD")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Id,Titulo,Descricao,Preco,AutorId,CategoriaId")] Livro livro)
@@ -69,6 +76,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Livro/Edit/5
+        [ClaimsAuthorize("ADM", "ED")]
         public IActionResult Edit(Guid id)
         {
             if (id == null)
@@ -89,6 +97,7 @@ namespace EbookStore.Controllers
         }
 
         // POST: Livro/Edit/5
+        [ClaimsAuthorize("ADM", "ED")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Guid id, [Bind("Id,Titulo,Descricao,Preco,AutorId,CategoriaId")] Livro livro)
@@ -124,6 +133,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Livro/Delete/5
+        [ClaimsAuthorize("ADM", "EX")]
         public IActionResult Delete(Guid id)
         {
             if (id == null)
@@ -145,6 +155,7 @@ namespace EbookStore.Controllers
         }
 
         // POST: Livro/Delete/5
+        [ClaimsAuthorize("ADM", "EX")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(Guid id)

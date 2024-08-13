@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using EbookStore.Models; // Certifique-se de ajustar o namespace conforme a estrutura do seu projeto
+using EbookStore.Models;
+using Microsoft.AspNetCore.Authorization;
+using EbookStore.Extensions; // Certifique-se de ajustar o namespace conforme a estrutura do seu projeto
 
 namespace EbookStore.Controllers
 {
+    [Authorize]
     public class CategoriaController : Controller
     {
         private readonly ContextoEbookStore _contexto;
@@ -15,6 +17,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Categoria
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var categorias = _contexto.Categorias.ToList();
@@ -22,6 +25,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Categoria/Details/5
+        [AllowAnonymous]
         public IActionResult Details(Guid id)
         {
             if (id == null)
@@ -40,13 +44,15 @@ namespace EbookStore.Controllers
             return View(categoria);
         }
 
-        // GET: Categoria/Create
+        // GET: Categoria/Create]
+        [ClaimsAuthorize("ADM", "AD")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Categoria/Create
+        [ClaimsAuthorize("ADM", "AD")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("CategoriaId,Nome")] Categoria categoria)
@@ -61,6 +67,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Categoria/Edit/5
+        [ClaimsAuthorize("ADM", "ED")]
         public IActionResult Edit(Guid id)
         {
             if (id == null)
@@ -78,6 +85,7 @@ namespace EbookStore.Controllers
         }
 
         // POST: Categoria/Edit/5
+        [ClaimsAuthorize("ADM", "ED")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Guid id, [Bind("Id,Nome")] Categoria categoria)
@@ -111,6 +119,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Categoria/Delete/5
+        [ClaimsAuthorize("ADM", "EX")]
         public IActionResult Delete(Guid id)
         {
             if (id == null)
@@ -130,6 +139,7 @@ namespace EbookStore.Controllers
         }
 
         // POST: Categoria/Delete/5
+        [ClaimsAuthorize("ADM", "EX")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(Guid id)

@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EbookStore.Models;
+using Microsoft.AspNetCore.Authorization;
+using EbookStore.Extensions;
 
 namespace EbookStore.Controllers
 {
+    [Authorize]
     public class AutorController : Controller
     {
         private readonly ContextoEbookStore _contexto;
@@ -13,6 +16,7 @@ namespace EbookStore.Controllers
             _contexto = contexto;
         }
         // GET: Autor
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var autores = _contexto.Autores.ToList();
@@ -20,6 +24,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Autor/Details/5
+        [AllowAnonymous]
         public IActionResult Details(Guid? id)
         {
             if (id == null)
@@ -39,12 +44,14 @@ namespace EbookStore.Controllers
         }
 
         // GET: Autor/Create
+        [ClaimsAuthorize("ADM", "AD")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Autor/Create
+        [ClaimsAuthorize("ADM", "AD")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Nome,Biografia")] Autor autor)
@@ -59,6 +66,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Autor/Edit/5
+        [ClaimsAuthorize("ADM", "ED")]
         public IActionResult Edit(Guid id)
         {
             if (id == null)
@@ -76,6 +84,7 @@ namespace EbookStore.Controllers
         }
 
         // POST: Autor/Edit/5
+        [ClaimsAuthorize("ADM", "ED")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Guid id, [Bind("Id,Nome,Biografia")] Autor autor)
@@ -114,6 +123,7 @@ namespace EbookStore.Controllers
         }
 
         // GET: Autor/Delete/5
+        [ClaimsAuthorize("ADM", "EX")]
         public IActionResult Delete(Guid id)
         {
             if (id == null)
@@ -133,6 +143,7 @@ namespace EbookStore.Controllers
         }
 
         // POST: Autor/Delete/5
+        [ClaimsAuthorize("ADM", "EX")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(Guid id)
