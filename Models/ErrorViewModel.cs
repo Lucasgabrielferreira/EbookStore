@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace EbookStore.Models
 {
     public class ErrorViewModel
@@ -5,5 +7,10 @@ namespace EbookStore.Models
         public string? RequestId { get; set; }
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+
+        public int ErroCode { get; set; }
+        public string? Titulo { get; set; }
+        public string? Mensagem { get; set; }
+
     }
 }
