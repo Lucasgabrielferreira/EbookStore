@@ -1,6 +1,8 @@
 using EbookStore.Models;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using System.Diagnostics;
 
 namespace EbookStore.Controllers
@@ -8,10 +10,13 @@ namespace EbookStore.Controllers
     public class HomeController : Controller
     {
         private readonly ContextoEbookStore _contexto;
+        private readonly IStringLocalizer<HomeController> _localizer;
 
-        public HomeController(ContextoEbookStore contexto)
+        public HomeController(ContextoEbookStore contexto,
+                              IStringLocalizer<HomeController> localizer)
         {
             _contexto = contexto;
+            _localizer = localizer;
         }
 
         public IActionResult Index()
@@ -20,6 +25,8 @@ namespace EbookStore.Controllers
                 .Include(c => c.Livros)
                 .ThenInclude(l => l.Autor)
                 .ToList();
+
+            ViewData["Message"] = _localizer["Seja bem vindo!"];
 
             return View(categoriasComLivros);
         }
@@ -34,6 +41,19 @@ namespace EbookStore.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpPost]
+        public IActionResult SetLanguage(string culture, string returnUrl)
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+
+            return LocalRedirect(returnUrl);
+        }
+
 
         [Route("erro/{id:length(3,3)}")]
         public IActionResult Errors(int id)

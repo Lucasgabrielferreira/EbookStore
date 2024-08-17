@@ -46,7 +46,17 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - EbookStore - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="d-flex justify-content-between">
+                <div class="text-start">
+                    &copy; 2024 - EbookStore - Lucas Gabriel <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                </div>
+                @*                <div class="text-end">
+                Idioma selecionado: @System.Globalization.CultureInfo.CurrentCulture.Name
+                </div>*@
+                <div class="text-end">
+                    <partial name="_SelectLanguagePartial" />
+                </div>
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

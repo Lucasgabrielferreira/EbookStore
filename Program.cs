@@ -3,7 +3,8 @@ using EbookStore.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddMvcConfiguration()
+builder.AddGlobalizationConfig()
+        .AddMvcConfiguration()
        .AddIdentityConfiguration();
 
 builder.Services.AddApplicationServices(builder.Configuration);

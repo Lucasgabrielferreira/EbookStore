@@ -4,6 +4,7 @@ using EbookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using EbookStore.Extensions;
 
+
 namespace EbookStore.Controllers
 {
     [Authorize]
@@ -22,7 +23,7 @@ namespace EbookStore.Controllers
             var autores = _contexto.Autores.ToList();
             return View(autores);
         }
-
+          
         // GET: Autor/Details/5
         [AllowAnonymous]
         public IActionResult Details(Guid? id)
