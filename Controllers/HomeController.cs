@@ -27,6 +27,7 @@ namespace EbookStore.Controllers
                 .ToList();
 
             ViewData["Message"] = _localizer["Seja bem vindo!"];
+            ViewData["Veja"] = _localizer["Veja nossos livros por categorias"];
 
             return View(categoriasComLivros);
         }

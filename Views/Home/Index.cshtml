@@ -5,20 +5,20 @@
 
 <div class="text-center">
     <h1 class="text-md-center">@ViewData["Message"]</h1>
-    <h2>Veja nossos livros por categorias</h2>
+    <h2>@ViewData["Veja"]</h2>
 </div>
-<div>
+<div>                                     
     @foreach (var categoria in Model)
     {
         <div>
             <h3>@categoria.Nome</h3>
             <ul>
-                @foreach (var livro in categoria.Livros)
+                @foreach (var livro in categoria.Livros)                                         
                 {
                     <li>
                         <strong>@livro.Titulo</strong> - @livro.Descricao (Autor: @livro.Autor?.Nome, Preço: @livro.Preco.ToString("C"))
                     </li>
-                }
+                }  
             </ul>
         </div>
     }
