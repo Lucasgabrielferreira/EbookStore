@@ -1,15 +1,25 @@
-﻿@model IEnumerable<Livro>
+﻿@model X.PagedList.IPagedList<Livro>
+@using X.Web.PagedList
+
 @{
     ViewData["Title"] = "Lista de Livros";
 }
+
 <div class="d-flex justify-content-between align-items-center">
     <h1>Lista de Livros</h1>
-    <a class="btn btn-success" asp-action="Create">Cadastar novo Livro</a>
+    <a class="btn btn-success" asp-action="Create">Cadastrar novo Livro</a>
 </div>
 
+<!-- Campo de Busca -->
+<form asp-action="Index" method="get">
+    <div class="input-group mb-3">
+        <input type="text" name="searchString" class="form-control" placeholder="Buscar por título ou descrição" value="@ViewData["CurrentFilter"]">
+        <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+    </div>
+</form>
 
 <div>
-    <table class="table table-dark table-striped">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th scope="col">Titulo</th>
@@ -21,26 +31,88 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model != null)
+            @foreach (var livro in Model)
             {
-                @foreach (var livro in Model)
-                {
-                    <tr>
-                        <th scope="row">@livro.Titulo</th>
-                        <td>@livro.Descricao</td>
-                        <td>@livro.Preco.ToString("C")</td>
-                        <td>@livro.Categoria?.Nome</td>
-                        <td>@livro.Autor?.Nome</td>
-                        <td>
-                            <a asp-controller="Livro" asp-action="Edit" asp-route-id="@livro.Id" class="btn btn-warning">Editar</a>
-                            <a asp-controller="Livro" asp-action="Delete" asp-route-id="@livro.Id" class="btn btn-danger">Excluir</a>
-                        </td>
-                    </tr>
-                }
+                <tr>
+                    <th scope="row">@livro.Titulo</th>
+                    <td>@livro.Descricao</td>
+                    <td>@livro.Preco.ToString("C")</td>
+                    <td>@livro.Categoria?.Nome</td>
+                    <td>@livro.Autor?.Nome</td>
+                    <td>
+                        <button type="button" class="btn btn-dark" data-bs-toggle="modal"
+                                data-bs-target="#detalhesModal" data-nome="@livro.Titulo" data-descricao="@livro.Descricao" data-autor="@livro.Autor?.Nome">
+                            <span class="fa fa-search">Detalhes</span>
+                        </button>
+                        <a asp-controller="Livro" asp-action="Edit" asp-route-id="@livro.Id" class="btn btn-warning fa fa-pencil">Editar</a>
+                        <a asp-controller="Livro" asp-action="Delete" asp-route-id="@livro.Id" class="btn btn-danger fa fa-trash">Excluir</a>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
+
+    <!-- Exibe a paginação -->
+    <div class="d-flex justify-content-center">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewData["CurrentFilter"] }), new PagedListRenderOptions
+   {
+       DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+       DisplayLinkToLastPage = PagedListDisplayMode.Always,
+       DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+       DisplayLinkToNextPage = PagedListDisplayMode.Always
+   })
+    </div>
+
+    @if (!string.IsNullOrEmpty(ViewData["CurrentFilter"] as string))
+    {
+        <footer>
+            <a class="btn btn-info" asp-controller="Livro" asp-action="Index">Voltar</a>
+        </footer>
+    }
+
     <footer>
-        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Pagina inicial</a>
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Página inicial</a>
     </footer>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="detalhesModal" tabindex="-1" aria-labelledby="detalhesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detalhesModalLabel">Detalhes do Livro</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p><strong>Titulo:</strong> <span id="livroTitulo"></span></p>
+                        <p><strong>Descrição:</strong> <span id="livroDescricao"></span></p>
+                        <p><strong>Autor:</strong> <span id="livroAutor"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#detalhesModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Botão que acionou o modal
+                var titulo = button.data('nome');
+                var descricao = button.data('descricao');
+                var autor = button.data('autor');
+
+                // Atualize o conteúdo do modal
+                $('#livroTitulo').text(titulo);
+                $('#livroDescricao').text(descricao);
+                $('#livroAutor').text(autor);
+            });
+        });
+    </script>
+}

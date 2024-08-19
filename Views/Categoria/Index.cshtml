@@ -1,15 +1,24 @@
-﻿@model IEnumerable<Categoria>
+﻿@model X.PagedList.IPagedList<Categoria>
+@using X.Web.PagedList
 @{
-    ViewData["Title"] = "Lista de Categoria";
+    ViewData["Title"] = "Lista de Categorias";
 }
+
 <div class="d-flex justify-content-between align-items-center">
-    <h1>Lista de Categoria</h1>
-    <a class="btn btn-success" asp-action="Create">Cadastar nova Categoria</a>
+    <h1>Lista de Categorias</h1>
+    <a class="btn btn-success" asp-action="Create">Cadastrar nova Categoria</a>
 </div>
 
+<!-- Campo de Busca -->
+<form asp-action="Index" method="get">
+    <div class="input-group mb-3">
+        <input type="text" name="searchString" class="form-control" placeholder="Buscar por nome" value="@ViewData["CurrentFilter"]">
+        <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+    </div>
+</form>
 
 <div>
-    <table class="table table-dark table-striped">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th scope="col">Nome</th>
@@ -17,23 +26,67 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model != null)
+            @foreach (var categoria in Model)
             {
-                @foreach (var categorias in Model)
-                {
-                    <tr>
-                        <th scope="row">@categorias.Nome</th>
-                        <td>
-                            <a asp-controller="Categoria" asp-action="Edit"  asp-route-id="@categorias.Id" class="btn btn-warning">Editar</a>
-                            <a asp-controller="Categoria" asp-action="Delete" asp-route-id="@categorias.Id" class="btn btn-danger">Excluir</a>
-                        </td>
-                    </tr>
-                }
-                    
+                <tr>
+                    <th scope="row">@categoria.Nome</th>
+                    <td>
+                        <a asp-controller="Categoria" asp-action="Edit" asp-route-id="@categoria.Id" class="btn btn-warning">Editar</a>
+                        <a asp-controller="Categoria" asp-action="Delete" asp-route-id="@categoria.Id" class="btn btn-danger">Excluir</a>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
+
+    <!-- Exibe a paginação -->
+    <div class="d-flex justify-content-center">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewData["CurrentFilter"] }), new PagedListRenderOptions
+   {
+       DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+       DisplayLinkToLastPage = PagedListDisplayMode.Always,
+       DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+       DisplayLinkToNextPage = PagedListDisplayMode.Always
+   })
+    </div>
+
     <footer>
-        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Pagina inicial</a>
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Página inicial</a>
     </footer>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="detalhesModal" tabindex="-1" aria-labelledby="detalhesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detalhesModalLabel">Detalhes da Categoria</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p><strong>Nome:</strong> <span id="categoriaNome"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#detalhesModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Botão que acionou o modal
+                var nome = button.data('nome');
+
+                // Atualize o conteúdo do modal
+                $('#categoriaNome').text(nome);
+            });
+        });
+    </script>
+}

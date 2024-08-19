@@ -3,6 +3,7 @@ using EbookStore.Models;
 using Microsoft.EntityFrameworkCore;
 using EbookStore.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using X.PagedList.Extensions;
 
 namespace EbookStore.Controllers
 {
@@ -18,12 +19,23 @@ namespace EbookStore.Controllers
 
         // GET: Cliente
         [AllowAnonymous]
-        public IActionResult Index()
+        public IActionResult Index(string searchString, int page = 1)
         {
-            var clientes = _contexto.Clientes.ToList();
+            // Filtra os clientes com base na string de busca
+            var clientesQuery = _contexto.Clientes.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                clientesQuery = clientesQuery.Where(c => c.Nome.Contains(searchString) || c.Email.Contains(searchString));
+                ViewData["CurrentFilter"] = searchString;
+            }
+
+            // Pagina os resultados
+            int pageSize = 10; // Número de clientes por página
+            var clientes = clientesQuery.ToPagedList(page, pageSize);
+
             return View(clientes);
         }
-
         // GET: Cliente/Details/5
         [AllowAnonymous]
         public IActionResult Details(Guid id)

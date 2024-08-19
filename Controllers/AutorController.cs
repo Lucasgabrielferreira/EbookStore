@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using EbookStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using EbookStore.Extensions;
+using X.PagedList.Extensions;
 
 
 namespace EbookStore.Controllers
@@ -18,12 +19,24 @@ namespace EbookStore.Controllers
         }
         // GET: Autor
         [AllowAnonymous]
-        public IActionResult Index()
+        public IActionResult Index(string searchString, int page = 1)
         {
-            var autores = _contexto.Autores.ToList();
+            // Filtra os autores com base na string de busca
+            var autoresQuery = _contexto.Autores.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                autoresQuery = autoresQuery.Where(a => a.Nome.Contains(searchString) || a.Biografia.Contains(searchString));
+                ViewData["CurrentFilter"] = searchString;
+            }
+
+            // Pagina os resultados
+            int pageSize = 10; // Número de autores por página
+            var autores = autoresQuery.ToPagedList(page, pageSize);
+
             return View(autores);
         }
-          
+
         // GET: Autor/Details/5
         [AllowAnonymous]
         public IActionResult Details(Guid? id)

@@ -4,6 +4,8 @@ using EbookStore.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
 using EbookStore.Extensions;
+using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace EbookStore.Controllers
 {
@@ -19,13 +21,26 @@ namespace EbookStore.Controllers
 
         // GET: Livro
         [AllowAnonymous]
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string searchString, int? page)
         {
+            int pageSize = 10; // Define o tamanho da página
+            int pageNumber = (page ?? 1); // Define o número da página atual
+
             var livros = _contexto.Livros
                 .Include(l => l.Autor)
                 .Include(l => l.Categoria)
-                .ToList();
-            return View(livros);
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                livros = livros.Where(l => l.Titulo.Contains(searchString) || l.Descricao.Contains(searchString));
+            }
+
+            var pagedLivros = livros.ToPagedList(pageNumber, pageSize);
+
+            ViewData["CurrentFilter"] = searchString;
+
+            return View(pagedLivros);
         }
 
         // GET: Livro/Details/5

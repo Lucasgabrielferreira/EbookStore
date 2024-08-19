@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using EbookStore.Models;
 using Microsoft.AspNetCore.Authorization;
-using EbookStore.Extensions; // Certifique-se de ajustar o namespace conforme a estrutura do seu projeto
+using EbookStore.Extensions;
+using X.PagedList.Extensions; // Certifique-se de ajustar o namespace conforme a estrutura do seu projeto
 
 namespace EbookStore.Controllers
 {
@@ -18,9 +19,21 @@ namespace EbookStore.Controllers
 
         // GET: Categoria
         [AllowAnonymous]
-        public IActionResult Index()
+        public IActionResult Index(string searchString, int page = 1)
         {
-            var categorias = _contexto.Categorias.ToList();
+            // Filtra as categorias com base na string de busca
+            var categoriasQuery = _contexto.Categorias.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                categoriasQuery = categoriasQuery.Where(c => c.Nome.Contains(searchString));
+                ViewData["CurrentFilter"] = searchString;
+            }
+
+            // Pagina os resultados
+            int pageSize = 10; // Número de categorias por página
+            var categorias = categoriasQuery.ToPagedList(page, pageSize);
+
             return View(categorias);
         }
 

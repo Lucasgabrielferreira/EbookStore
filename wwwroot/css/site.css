@@ -19,28 +19,28 @@ html {
 
 body {
     margin-bottom: 60px;
-    background-color: #000;
-    color: white;
+    background-color: #fff;
+    color: black;
     font-family: Arial, sans-serif;
 }
 
 header {
-    background-color: #000;
-    color: #0ae1f5;
+    background-color: #fff;
+    color: black;
     padding: 10px;
 }
 
     header .navbar-brand,
     header .nav-link {
-        color: #0ae1f5 !important;
+        color: #000 !important;
     }
 
         header .nav-link:hover {
-            color: #3a047a !important;
+            color: #7e0000 !important;
         }
 
 footer {
-    background-color: #000;
-    color: #0ae1f5;
+    background-color: #fff;
+    color: black;
     padding: 10px;
 }
