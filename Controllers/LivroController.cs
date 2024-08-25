@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
 using EbookStore.Extensions;
 using X.PagedList;
+using System.IO;
+using System.Linq;
 using X.PagedList.Extensions;
 
 namespace EbookStore.Controllers
@@ -45,17 +47,17 @@ namespace EbookStore.Controllers
 
         // GET: Livro/Details/5
         [AllowAnonymous]
-        public IActionResult Details(Guid id)
+        public async Task<IActionResult> Details(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 return NotFound();
             }
 
-            var livro = _contexto.Livros
+            var livro = await _contexto.Livros
                 .Include(l => l.Autor)
                 .Include(l => l.Categoria)
-                .FirstOrDefault(l => l.Id == id);
+                .FirstOrDefaultAsync(l => l.Id == id);
 
             if (livro == null)
             {
@@ -73,16 +75,23 @@ namespace EbookStore.Controllers
             return View(new Livro());
         }
 
-        // POST: Livro/Create
         [ClaimsAuthorize("ADM", "AD")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Titulo,Descricao,Preco,AutorId,CategoriaId")] Livro livro)
+        public async Task<IActionResult> Create([Bind("Id,Titulo,ImagemUpload,Descricao,Preco,AutorId,CategoriaId")] Livro livro)
         {
             if (ModelState.IsValid)
             {
+                var imgPrefixo = Guid.NewGuid() + "_";
+                if (!await UploadArquivo(livro.ImagemUpload, imgPrefixo))
+                {
+                    return View(livro);
+                }
+
+                livro.Imagem = imgPrefixo + livro.ImagemUpload.FileName;
+
                 _contexto.Add(livro);
-                _contexto.SaveChanges();
+                await _contexto.SaveChangesAsync(); // Certifique-se de que esta linha está sendo executada
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.CategoriaId = new SelectList(_contexto.Categorias, "Id", "Nome", livro.CategoriaId);
@@ -92,14 +101,14 @@ namespace EbookStore.Controllers
 
         // GET: Livro/Edit/5
         [ClaimsAuthorize("ADM", "ED")]
-        public IActionResult Edit(Guid id)
+        public async Task<IActionResult> Edit(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 return NotFound();
             }
 
-            var livro = _contexto.Livros.Find(id);
+            var livro = await _contexto.Livros.FindAsync(id);
 
             if (livro == null)
             {
@@ -112,26 +121,41 @@ namespace EbookStore.Controllers
         }
 
         // POST: Livro/Edit/5
-        [ClaimsAuthorize("ADM", "ED")]
+        [ClaimsAuthorize("ADM","ED")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Guid id, [Bind("Id,Titulo,Descricao,Preco,AutorId,CategoriaId")] Livro livro)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Titulo,ImagemUpload,Descricao,Preco,AutorId,CategoriaId")] Livro livro)
         {
             if (id != livro.Id)
             {
                 return NotFound();
             }
 
+            var livroDb = await _contexto.Livros.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    livro.Imagem = livroDb.Imagem;
+
+                    if (livro.ImagemUpload != null)
+                    {
+                        var imgPrefixo = Guid.NewGuid() + "_";
+                        if (!await UploadArquivo(livro.ImagemUpload, imgPrefixo))
+                        {
+                            return View(livro);
+                        }
+
+                        livro.Imagem = imgPrefixo + livro.ImagemUpload.FileName;
+                    }
+
                     _contexto.Update(livro);
-                    _contexto.SaveChanges();
+                    await _contexto.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!LivroExists(livro.Id))
+                    if (!await LivroExists(livro.Id))
                     {
                         return NotFound();
                     }
@@ -149,17 +173,17 @@ namespace EbookStore.Controllers
 
         // GET: Livro/Delete/5
         [ClaimsAuthorize("ADM", "EX")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            if (id == null)
+            if (id == Guid.Empty)
             {
                 return NotFound();
             }
 
-            var livro = _contexto.Livros
+            var livro = await _contexto.Livros
                 .Include(l => l.Autor)
                 .Include(l => l.Categoria)
-                .FirstOrDefault(l => l.Id == id);
+                .FirstOrDefaultAsync(l => l.Id == id);
 
             if (livro == null)
             {
@@ -173,17 +197,58 @@ namespace EbookStore.Controllers
         [ClaimsAuthorize("ADM", "EX")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var livro = _contexto.Livros.Find(id);
+            var livro = await _contexto.Livros.FindAsync(id);
+            if (livro == null)
+            {
+                return NotFound();
+            }
             _contexto.Livros.Remove(livro);
-            _contexto.SaveChanges();
+            await _contexto.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+
         }
 
-        private bool LivroExists(Guid id)
+        private async Task<bool> LivroExists(Guid id)
         {
-            return _contexto.Livros.Any(e => e.Id == id);
+            return await _contexto.Livros.AnyAsync(e => e.Id == id);
         }
+
+        private async Task<bool> UploadArquivo(IFormFile arquivo, string imgPrefixo)
+        {
+            if (arquivo == null || arquivo.Length <= 0) return false;
+
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath);
+            }
+
+            var path = Path.Combine(uploadPath, imgPrefixo + arquivo.FileName);
+
+            if (System.IO.File.Exists(path))
+            {
+                ModelState.AddModelError(string.Empty, "Já existe um arquivo com este nome!");
+                return false;
+            }
+
+            try
+            {
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await arquivo.CopyToAsync(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you could use a logging framework like Serilog, NLog, etc.)
+                ModelState.AddModelError(string.Empty, $"Erro ao salvar o arquivo: {ex.Message}");
+                return false;
+            }
+
+            return true;
+        }
+
     }
 }

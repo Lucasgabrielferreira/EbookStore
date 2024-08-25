@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/EbookStore.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/jquery-validation/dist/jquery.validate.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
     <header>
@@ -21,16 +22,20 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Livro" asp-action="Index">Livros</a>
+                            <a class="nav-link" asp-area="" asp-controller="Livro" asp-action="Index">
+                                <i class="fas fa-book"></i>Livros</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Cliente" asp-action="Index">Clientes</a>
+                            <a class="nav-link" asp-area="" asp-controller="Cliente" asp-action="Index">
+                                <i class="fas fa-user"></i>Clientes</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Autor" asp-action="Index">Autores</a>
+                            <a class="nav-link" asp-area="" asp-controller="Autor" asp-action="Index">
+                                <i class="fas fa-pen"></i> Autores</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Categoria" asp-action="Index">Categorias</a>
+                            <a class="nav-link" asp-area="" asp-controller="Categoria" asp-action="Index">
+                                <i class="fas fa-tags"></i>Categorias</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
@@ -38,21 +43,18 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container" >
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer">
+    <footer class="border-top footer mt-auto py-3 bg-light">
         <div class="container">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between align-items-center">
                 <div class="text-start">
                     &copy; 2024 - EbookStore - Lucas Gabriel <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                 </div>
-                @*                <div class="text-end">
-                Idioma selecionado: @System.Globalization.CultureInfo.CurrentCulture.Name
-                </div>*@
                 <div class="text-end">
                     <partial name="_SelectLanguagePartial" />
                 </div>

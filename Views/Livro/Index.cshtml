@@ -5,7 +5,7 @@
     ViewData["Title"] = "Lista de Livros";
 }
 
-<div class="d-flex justify-content-between align-items-center">
+<div class="d-flex justify-content-between align-items-center mb-3">
     <h1>Lista de Livros</h1>
     <a class="btn btn-success" asp-action="Create">Cadastrar novo Livro</a>
 </div>
@@ -22,30 +22,33 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">Titulo</th>
+                <th scope="col">Capa</th>
+                <th scope="col">Título</th>
                 <th scope="col">Descrição</th>
                 <th scope="col">Preço</th>
                 <th scope="col">Categoria</th>
-                <th scope="col">Autor</th>
-                <th></th>
+                <th scope="col">Ações</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var livro in Model)
             {
                 <tr>
+                    <!-- Exibe a capa do livro -->
+                    <td>
+                        <img src="~/images/@(string.IsNullOrEmpty(livro.Imagem) ? "placeholder.jpg" : livro.Imagem)" alt="Capa do livro" style="width: 50px; height: 75px; object-fit: cover;" />
+                    </td>
                     <th scope="row">@livro.Titulo</th>
                     <td>@livro.Descricao</td>
                     <td>@livro.Preco.ToString("C")</td>
                     <td>@livro.Categoria?.Nome</td>
-                    <td>@livro.Autor?.Nome</td>
                     <td>
                         <button type="button" class="btn btn-dark" data-bs-toggle="modal"
-                                data-bs-target="#detalhesModal" data-nome="@livro.Titulo" data-descricao="@livro.Descricao" data-autor="@livro.Autor?.Nome">
-                            <span class="fa fa-search">Detalhes</span>
+                                data-bs-target="#detalhesModal" data-nome="@livro.Titulo" data-descricao="@livro.Descricao" data-autor="@livro.Autor?.Nome" data-imagem="~/images/@livro.Imagem">
+                            <span class="fa fa-search"></span>
                         </button>
-                        <a asp-controller="Livro" asp-action="Edit" asp-route-id="@livro.Id" class="btn btn-warning fa fa-pencil">Editar</a>
-                        <a asp-controller="Livro" asp-action="Delete" asp-route-id="@livro.Id" class="btn btn-danger fa fa-trash">Excluir</a>
+                        <a asp-controller="Livro" asp-action="Edit" asp-route-id="@livro.Id" class="btn btn-warning fa fa-pencil"></a>
+                        <a asp-controller="Livro" asp-action="Delete" asp-route-id="@livro.Id" class="btn btn-danger fa fa-trash"></a>
                     </td>
                 </tr>
             }
@@ -85,8 +88,12 @@
             </div>
             <div class="modal-body">
                 <div class="row">
+                    <div class="col-md-4">
+                        <!-- Exibe a capa do livro no modal -->
+                        <img id="livroImagem" src="" alt="Capa do livro" class="img-fluid" />
+                    </div>
                     <div class="col-md-8">
-                        <p><strong>Titulo:</strong> <span id="livroTitulo"></span></p>
+                        <p><strong>Título:</strong> <span id="livroTitulo"></span></p>
                         <p><strong>Descrição:</strong> <span id="livroDescricao"></span></p>
                         <p><strong>Autor:</strong> <span id="livroAutor"></span></p>
                     </div>
@@ -107,11 +114,13 @@
                 var titulo = button.data('nome');
                 var descricao = button.data('descricao');
                 var autor = button.data('autor');
+                var imagem = button.data('imagem');
 
                 // Atualize o conteúdo do modal
                 $('#livroTitulo').text(titulo);
                 $('#livroDescricao').text(descricao);
                 $('#livroAutor').text(autor);
+                $('#livroImagem').attr('src', imagem);
             });
         });
     </script>

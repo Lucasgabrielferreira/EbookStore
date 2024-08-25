@@ -20,10 +20,12 @@ namespace EbookStore.Mappings
                 .IsRequired()
                 .HasMaxLength(200);
 
+            builder.Property(l => l.Imagem)
+           .HasMaxLength(255);
+
             builder.Property(l => l.Preco)
                 .IsRequired();
-               
-
+              
             builder.HasOne(l => l.Autor)
                      .WithMany(a => a.Livros)
                      .HasForeignKey(l => l.AutorId)
