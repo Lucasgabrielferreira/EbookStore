@@ -7,19 +7,30 @@
     <h1 class="text-md-center">@ViewData["Message"]</h1>
     <h2>@ViewData["Veja"]</h2>
 </div>
-<div>                                     
+
+<div>
     @foreach (var categoria in Model)
     {
         <div>
             <h3>@categoria.Nome</h3>
-            <ul>
-                @foreach (var livro in categoria.Livros)                                         
+            <div class="row">
+                @foreach (var livro in categoria.Livros)
                 {
-                    <li>
-                        <strong>@livro.Titulo</strong> - @livro.Descricao (Autor: @livro.Autor?.Nome, Preço: @livro.Preco.ToString("C"))
-                    </li>
-                }  
-            </ul>
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100">
+                            <div class="position-relative">
+                                <img class="card-img-top" src="~/images/@(string.IsNullOrEmpty(livro.Imagem) ? "placeholder.jpg" : livro.Imagem)" alt="@livro.Titulo" style="height: 250px; object-fit: cover;">
+                                <span class="badge bg-info text-white position-absolute top-0 start-0 m-2">e-Book</span>
+                            </div>
+                            <div class="card-body text-center">
+                                <h5 class="card-title">@livro.Titulo</h5>
+                                <p class="card-text"><small class="text-muted">Autor: @livro.Autor?.Nome</small></p>
+                                <p class="card-text text-primary"><strong>@livro.Preco.ToString("C")</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     }
 </div>

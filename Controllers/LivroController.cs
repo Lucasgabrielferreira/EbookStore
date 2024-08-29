@@ -23,22 +23,32 @@ namespace EbookStore.Controllers
 
         // GET: Livro
         [AllowAnonymous]
-        public async Task<IActionResult> Index(string searchString, int? page)
+        public async Task<IActionResult> Index(string searchString, int? page, int? pageSize)
         {
-            int pageSize = 10; // Define o tamanho da página
-            int pageNumber = (page ?? 1); // Define o número da página atual
+            // Valor padrão para o tamanho da página
+            int defaultPageSize = 10;
+
+            // Define o tamanho da página com base na escolha do usuário ou usa o valor padrão
+            int currentPageSize = pageSize ?? defaultPageSize;
+
+            // Salva o tamanho da página na ViewData para que a seleção seja mantida
+            ViewData["CurrentPageSize"] = currentPageSize;
+
+            // Número da página atual
+            int pageNumber = (page ?? 1);
 
             var livros = _contexto.Livros
                 .Include(l => l.Autor)
                 .Include(l => l.Categoria)
                 .AsQueryable();
 
+            // Filtro de pesquisa
             if (!string.IsNullOrEmpty(searchString))
             {
                 livros = livros.Where(l => l.Titulo.Contains(searchString) || l.Descricao.Contains(searchString));
             }
 
-            var pagedLivros = livros.ToPagedList(pageNumber, pageSize);
+            var pagedLivros = livros.ToPagedList(pageNumber, currentPageSize);
 
             ViewData["CurrentFilter"] = searchString;
 
@@ -121,7 +131,7 @@ namespace EbookStore.Controllers
         }
 
         // POST: Livro/Edit/5
-        [ClaimsAuthorize("ADM","ED")]
+        [ClaimsAuthorize("ADM", "ED")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Titulo,ImagemUpload,Descricao,Preco,AutorId,CategoriaId")] Livro livro)
@@ -133,25 +143,40 @@ namespace EbookStore.Controllers
 
             var livroDb = await _contexto.Livros.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
 
+            if (livroDb == null)
+            {
+                return NotFound();
+            }
+
+            if (livro.ImagemUpload == null)
+            {
+                // Mantenha a imagem existente se nenhuma nova for carregada
+                livro.Imagem = livroDb.Imagem;
+            }
+            else
+            {
+                var imgPrefixo = Guid.NewGuid() + "_";
+                if (!await UploadArquivo(livro.ImagemUpload, imgPrefixo))
+                {
+                    // Se ocorrer um erro durante o upload, retorne o modelo para a view com a imagem atual
+                    livro.Imagem = livroDb.Imagem;
+                    return View(livro);
+                }
+
+                // Atualize o nome da imagem se o upload for bem-sucedido
+                livro.Imagem = imgPrefixo + livro.ImagemUpload.FileName;
+            }
+
+            // Remova a validação obrigatória da imagem se for uma edição
+            ModelState.Remove("ImagemUpload");
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    livro.Imagem = livroDb.Imagem;
-
-                    if (livro.ImagemUpload != null)
-                    {
-                        var imgPrefixo = Guid.NewGuid() + "_";
-                        if (!await UploadArquivo(livro.ImagemUpload, imgPrefixo))
-                        {
-                            return View(livro);
-                        }
-
-                        livro.Imagem = imgPrefixo + livro.ImagemUpload.FileName;
-                    }
-
                     _contexto.Update(livro);
                     await _contexto.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -164,8 +189,8 @@ namespace EbookStore.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
+
             ViewBag.Autores = new SelectList(_contexto.Autores, "Id", "Nome", livro.AutorId);
             ViewBag.Categorias = new SelectList(_contexto.Categorias, "Id", "Nome", livro.CategoriaId);
             return View(livro);
@@ -217,15 +242,9 @@ namespace EbookStore.Controllers
 
         private async Task<bool> UploadArquivo(IFormFile arquivo, string imgPrefixo)
         {
-            if (arquivo == null || arquivo.Length <= 0) return false;
+            if (arquivo.Length <= 0) return false;
 
-            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
-            if (!Directory.Exists(uploadPath))
-            {
-                Directory.CreateDirectory(uploadPath);
-            }
-
-            var path = Path.Combine(uploadPath, imgPrefixo + arquivo.FileName);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", imgPrefixo + arquivo.FileName);
 
             if (System.IO.File.Exists(path))
             {
@@ -233,22 +252,12 @@ namespace EbookStore.Controllers
                 return false;
             }
 
-            try
+            using (var stream = new FileStream(path, FileMode.Create))
             {
-                using (var stream = new FileStream(path, FileMode.Create))
-                {
-                    await arquivo.CopyToAsync(stream);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log the exception (you could use a logging framework like Serilog, NLog, etc.)
-                ModelState.AddModelError(string.Empty, $"Erro ao salvar o arquivo: {ex.Message}");
-                return false;
+                await arquivo.CopyToAsync(stream);
             }
 
             return true;
         }
-
     }
 }

@@ -43,12 +43,21 @@
 
     <!-- Exibe a paginação -->
     <div class="d-flex justify-content-center">
-        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewData["CurrentFilter"] }), new PagedListRenderOptions
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, pageSize = ViewData["CurrentPageSize"], searchString = ViewData["CurrentFilter"] }), new PagedListRenderOptions
    {
+       UlElementClasses = new[] { "pagination" },
+       LiElementClasses = new[] { "page-item" },
+       PageClasses = new[] { "page-link" },
        DisplayLinkToFirstPage = PagedListDisplayMode.Always,
        DisplayLinkToLastPage = PagedListDisplayMode.Always,
        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
-       DisplayLinkToNextPage = PagedListDisplayMode.Always
+       DisplayLinkToNextPage = PagedListDisplayMode.Always,
+       DisplayLinkToIndividualPages = true,
+       LinkToFirstPageFormat = "<< First",
+       LinkToPreviousPageFormat = "< Previous",
+       LinkToNextPageFormat = "Next >",
+       LinkToLastPageFormat = "Last >>",
+       Display = PagedListDisplayMode.Always
    })
     </div>
 

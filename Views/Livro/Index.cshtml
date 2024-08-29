@@ -16,6 +16,27 @@
         <input type="text" name="searchString" class="form-control" placeholder="Buscar por título ou descrição" value="@ViewData["CurrentFilter"]">
         <button class="btn btn-outline-secondary" type="submit">Buscar</button>
     </div>
+
+    <div class="form-group">
+        <label for="pageSize">Itens por página:</label>
+        <select id="pageSize" name="pageSize" class="form-select" onchange="this.form.submit()">
+            @{
+                var currentPageSize = ViewData["CurrentPageSize"]?.ToString();
+                var options = new List<SelectListItem>
+            {
+            new SelectListItem { Value = "5", Text = "5", Selected = currentPageSize == "5" },
+            new SelectListItem { Value = "10", Text = "10", Selected = currentPageSize == "10" },
+            new SelectListItem { Value = "20", Text = "20", Selected = currentPageSize == "20" },
+            new SelectListItem { Value = "50", Text = "50", Selected = currentPageSize == "50" }
+            };
+            }
+
+            @foreach (var option in options)
+            {
+                <option value="@option.Value" selected="@(option.Selected ? "selected" : null)">@option.Text</option>
+            }
+        </select>
+    </div>
 </form>
 
 <div>
@@ -44,7 +65,9 @@
                     <td>@livro.Categoria?.Nome</td>
                     <td>
                         <button type="button" class="btn btn-dark" data-bs-toggle="modal"
-                                data-bs-target="#detalhesModal" data-nome="@livro.Titulo" data-descricao="@livro.Descricao" data-autor="@livro.Autor?.Nome" data-imagem="~/images/@livro.Imagem">
+                                data-bs-target="#detalhesModal" data-nome="@livro.Titulo"
+                                data-descricao="@livro.Descricao" data-autor="@livro.Autor?.Nome"
+                                data-imagem="~/images/@(string.IsNullOrEmpty(livro.Imagem) ? "placeholder.jpg" : livro.Imagem)">
                             <span class="fa fa-search"></span>
                         </button>
                         <a asp-controller="Livro" asp-action="Edit" asp-route-id="@livro.Id" class="btn btn-warning fa fa-pencil"></a>
@@ -55,14 +78,22 @@
         </tbody>
     </table>
 
-    <!-- Exibe a paginação -->
     <div class="d-flex justify-content-center">
-        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewData["CurrentFilter"] }), new PagedListRenderOptions
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, pageSize = ViewData["CurrentPageSize"], searchString = ViewData["CurrentFilter"] }), new PagedListRenderOptions
    {
+       UlElementClasses = new[] { "pagination" },
+       LiElementClasses = new[] { "page-item" },
+       PageClasses = new[] { "page-link" },
        DisplayLinkToFirstPage = PagedListDisplayMode.Always,
        DisplayLinkToLastPage = PagedListDisplayMode.Always,
        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
-       DisplayLinkToNextPage = PagedListDisplayMode.Always
+       DisplayLinkToNextPage = PagedListDisplayMode.Always,
+       DisplayLinkToIndividualPages = true,
+       LinkToFirstPageFormat = "<< First",
+       LinkToPreviousPageFormat = "< Previous",
+       LinkToNextPageFormat = "Next >",
+       LinkToLastPageFormat = "Last >>",
+       Display = PagedListDisplayMode.Always
    })
     </div>
 
@@ -116,11 +147,14 @@
                 var autor = button.data('autor');
                 var imagem = button.data('imagem');
 
+                // Ajuste o caminho da imagem para remover o "~"
+                var imagemSrc = imagem.replace("~", "");
+
                 // Atualize o conteúdo do modal
                 $('#livroTitulo').text(titulo);
                 $('#livroDescricao').text(descricao);
                 $('#livroAutor').text(autor);
-                $('#livroImagem').attr('src', imagem);
+                $('#livroImagem').attr('src', imagemSrc);
             });
         });
     </script>

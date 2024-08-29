@@ -17,17 +17,23 @@ html {
     min-height: 100%;
 }
 
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #fff;
+    color: black;
+    padding: 0px;
+}
+
 body {
+    padding-top: 100px; /* Espaço para o cabeçalho fixo */
     margin-bottom: 60px;
+    margin: 30;
     background-color: #fff;
     color: black;
     font-family: Arial, sans-serif;
-}
-
-header {
-    background-color: #fff;
-    color: black;
-    padding: 10px;
 }
 
     header .navbar-brand,
@@ -40,9 +46,13 @@ header {
         }
 
 footer {
+    bottom: 0;
+    width: 100%;
+    height: 60px; /* Defina a altura do rodapé */
     background-color: #fff;
     color: black;
     padding: 10px;
+    z-index: 1000;
 }
 
 custom-file-button input[type=file] {
@@ -61,3 +71,63 @@ custom-file-button input[type=file] {
     background-color: #dde0e3;
     cursor: pointer;
 }
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-img-top {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    margin-bottom: 10px;
+    font-size: 0.875rem;
+}
+
+.text-primary {
+    color: #17a2b8 !important; /* Cor personalizada para o preço */
+}
+
+.position-relative {
+    position: relative;
+}
+
+.position-absolute {
+    position: absolute;
+}
+
+.top-0 {
+    top: 0;
+}
+
+.start-0 {
+    left: 0;
+}
+
+.m-2 {
+    margin: 0.5rem;
+}
+
+.h-100 {
+    height: 100%;
+}
+
