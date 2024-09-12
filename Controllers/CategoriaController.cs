@@ -79,6 +79,18 @@ namespace EbookStore.Controllers
             return View(categoria);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateAjax([Bind("Nome")] Categoria categoria)
+        {
+            if (ModelState.IsValid)
+            {
+                _contexto.Add(categoria);
+                await _contexto.SaveChangesAsync();
+                return Json(new { success = true, categoriaId = categoria.Id, categoriaNome = categoria.Nome });
+            }
+            return Json(new { success = false });
+        }
+
         // GET: Categoria/Edit/5
         [ClaimsAuthorize("ADM", "ED")]
         public IActionResult Edit(Guid id)

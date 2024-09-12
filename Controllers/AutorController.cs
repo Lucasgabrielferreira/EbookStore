@@ -79,6 +79,18 @@ namespace EbookStore.Controllers
             return View(autor);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateAjax([Bind("Nome,Biografia")] Autor autor)
+        {
+            if (ModelState.IsValid)
+            {
+                _contexto.Add(autor);
+                await _contexto.SaveChangesAsync();
+                return Json(new { success = true, autorId = autor.Id, autorNome = autor.Nome });
+            }
+            return Json(new { success = false });
+        }
+
         // GET: Autor/Edit/5
         [ClaimsAuthorize("ADM", "ED")]
         public IActionResult Edit(Guid id)

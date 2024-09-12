@@ -19,7 +19,13 @@
                     <div class="col-md-3 col-sm-6 mb-4">
                         <div class="card h-100">
                             <div class="position-relative">
-                                <img class="card-img-top" src="~/images/@(string.IsNullOrEmpty(livro.Imagem) ? "placeholder.jpg" : livro.Imagem)" alt="@livro.Titulo" style="height: 250px; object-fit: cover;">
+                                <!-- Imagem do eBook com ajuste perfeito -->
+                                <img class="card-img-top"
+                                     src="~/images/@(string.IsNullOrEmpty(livro.Imagem) ? "placeholder.jpg" : livro.Imagem)"
+                                     alt="@livro.Titulo"
+                                     style="height: 280px; width: 100%; object-fit: contain; background-color: #f8f8f8; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+
+                                <!-- Badge "e-Book" no canto superior -->
                                 <span class="badge bg-info text-white position-absolute top-0 start-0 m-2">e-Book</span>
                             </div>
                             <div class="card-body text-center">

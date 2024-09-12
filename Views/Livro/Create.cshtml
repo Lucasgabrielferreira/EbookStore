@@ -16,14 +16,13 @@
         </div>
 
         <div class="mb-3">
-            <label for="Descrição" class="form-label">Descrição</label>
+            <label for="Descricao" class="form-label">Descrição</label>
             <input type="text" class="form-control" asp-for="Descricao" id="Descricao" placeholder="Digite Descrição do Livro">
             <span class="text-danger" asp-validation-for="Descricao"></span>
         </div>
 
         <div class="mb-3">
             <label asp-for="ImagemUpload" class="control-label"></label>
-
             <div class="input-group custom-file-button">
                 <input type="file" class="form-control" id="ImagemUpload" asp-for="ImagemUpload">
                 <label class="input-group-text" for="ImagemUpload">Escolher</label>
@@ -32,20 +31,26 @@
         </div>
 
         <div class="mb-3">
-            <label for="Preço" class="form-label">Preço</label>
+            <label for="Preco" class="form-label">Preço</label>
             <input type="number" class="form-control" asp-for="Preco" id="Preco" step="0.01" placeholder="Valor do Livro">
             <span class="text-danger" asp-validation-for="Preco"></span>
         </div>
 
         <div class="mb-3">
             <label for="CategoriaId" class="form-label">Categoria</label>
-            <select class="form-control" asp-for="CategoriaId" asp-items="ViewBag.CategoriaId"></select>
-            <span asp-validation-for="CategoriaId"></span>
+            <div class="input-group">
+                <select class="form-control" asp-for="CategoriaId" asp-items="ViewBag.CategoriaId"></select>
+                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#categoriaModal">Nova Categoria</button>
+            </div>
+            <span asp-validation-for="CategoriaId" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
             <label for="AutorId" class="form-label">Autor</label>
-            <select class="form-control" asp-for="AutorId" asp-items="ViewBag.AutorId"></select>
+            <div class="input-group">
+                <select class="form-control" asp-for="AutorId" asp-items="ViewBag.AutorId"></select>
+                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#autorModal">Novo Autor</button>
+            </div>
             <span class="text-danger" asp-validation-for="AutorId"></span>
         </div>
 
@@ -54,16 +59,99 @@
     </form>
 </div>
 
+<!-- Modal para Nova Categoria -->
+<div class="modal fade" id="categoriaModal" tabindex="-1" aria-labelledby="categoriaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoriaModalLabel">Nova Categoria</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label for="novaCategoria" class="form-label">Nome da Categoria</label>
+                <input type="text" id="novaCategoria" class="form-control" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="addCategoriaBtn">Adicionar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Novo Autor -->
+<div class="modal fade" id="autorModal" tabindex="-1" aria-labelledby="autorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="autorModalLabel">Novo Autor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label for="novoAutor" class="form-label">Nome do Autor</label>
+                <input type="text" id="novoAutor" class="form-control" />
+
+                <label for="novaBiografia" class="form-label">Biografia</label>
+                <textarea id="novaBiografia" class="form-control"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="addAutorBtn">Adicionar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
     <script>
-        $("#ImagemUpload").attr("data-val", "true");
-        $("#ImagemUpload").attr("data-val-required", "Preencha o campo Imagem");
+        $(document).ready(function () {
+            $('#addCategoriaBtn').on('click', function () {
+                var novaCategoria = $('#novaCategoria').val();
+                if (novaCategoria) {
+                    $.ajax({
+                        url: '@Url.Action("CreateAjax", "Categoria")',
+                        type: 'POST',
+                        data: { Nome: novaCategoria },
+                        success: function (response) {
+                            if (response.success) {
+                                var newOption = new Option(response.categoriaNome, response.categoriaId, true, true);
+                                $('#CategoriaId').append(newOption).trigger('change');
+                                $('#categoriaModal').modal('hide');
+                            } else {
+                                alert("Erro ao adicionar categoria.");
+                            }
+                        }
+                    });
+                }
+            });
+            $('#addAutorBtn').on('click', function () {
+                var novoAutor = $('#novoAutor').val();
+                var novaBiografia = $('#novaBiografia').val();
+                if (novoAutor && novaBiografia) {
+                    $.ajax({
+                        url: '@Url.Action("CreateAjax", "Autor")',
+                        type: 'POST',
+                        data: { Nome: novoAutor, Biografia: novaBiografia },
+                        success: function (response) {
+                            if (response.success) {
+                                var newOption = new Option(response.autorNome, response.autorId, true, true);
+                                $('#AutorId').append(newOption).trigger('change');
+                                $('#autorModal').modal('hide');
+                            } else {
+                                alert("Erro ao adicionar autor.");
+                            }
+                        }
+                    });
+                }
+            });
+        });
     </script>
 }
+
 @if (!ViewData.ModelState.IsValid)
 {
     <div class="alert alert-danger">

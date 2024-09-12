@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace EbookStore.Models
+﻿namespace EbookStore.Models
 {
     public class Autor : EntidadeBase
     {
