@@ -1,6 +1,9 @@
 <h1>EbookStore</h1>
 
 <p>Este projeto é uma aplicação ASP.NET Core MVC para gerenciar uma loja de ebooks. Ele foi desenvolvido com o intuito de aprender e aplicar boas práticas de desenvolvimento, incluindo o uso de FluentValidation para validação de modelos.</p>
+<h2>Vídeo de Demonstração</h2>
+
+[![Assista à demonstração no YouTube](https://img.youtube.com/vi/L3T6LevsTtU/0.jpg)](https://youtu.be/L3T6LevsTtU)
 
 <h2>Funcionalidades</h2>
 <ul>
